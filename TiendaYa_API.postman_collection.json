@@ -1,112 +1,370 @@
 {
   "info": {
-    "_postman_id": "7a3b4e92-f018-4b78-9e51-tiendaya-api",
-    "name": "Electiva 1 - TiendaYa API",
-    "description": "Colección de endpoints para el proyecto Spring Boot electiva1-brayan (puerto 8001)",
+    "_postman_id": "7a3b4e92-f018-4b78-9e51-tiendaya-hexagonal-api",
+    "name": "Electiva 1 - TiendaYa API (Arquitectura Hexagonal)",
+    "description": "Colección completa de endpoints para el proyecto refactorizado bajo Arquitectura Hexagonal (Puertos y Adaptadores). Incluye Usuarios, Productos y Pedidos.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost:8001",
+      "value": "http://localhost:8080",
       "type": "string"
     }
   ],
   "item": [
     {
-      "name": "1. Listar Productos",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/products",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "products"
-          ]
-        },
-        "description": "Retorna la lista de todos los productos registrados en la base de datos PostgreSQL."
-      },
-      "response": []
-    },
-    {
-      "name": "2. Crear Producto",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/products?name=Teclado Mecanico RGB&price=89.99",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "products"
-          ],
-          "query": [
-            {
-              "key": "name",
-              "value": "Teclado Mecanico RGB",
-              "description": "Nombre del producto (no puede estar vacío)"
+      "name": "1. Módulo de Usuarios",
+      "item": [
+        {
+          "name": "1.1 Listar Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios"]
             },
-            {
-              "key": "price",
-              "value": "89.99",
-              "description": "Precio positivo del producto (BigDecimal)"
-            }
-          ]
+            "description": "Retorna todos los usuarios registrados en el sistema."
+          },
+          "response": []
         },
-        "description": "Registra un nuevo producto en la base de datos mediante RequestParam."
-      },
-      "response": []
-    },
-    {
-      "name": "3. Obtener Producto por ID",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/products/1",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "products",
-            "1"
-          ]
-        },
-        "description": "Retorna el producto con ID 1 o 404 Not Found si no existe."
-      },
-      "response": []
-    },
-    {
-      "name": "4. Probar Validación (Precio Negativo)",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/products?name=Mouse Invalido&price=-15.00",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "products"
-          ],
-          "query": [
-            {
-              "key": "name",
-              "value": "Mouse Invalido"
+        {
+          "name": "1.2 Registrar Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Brayan Alexis Gomez\",\n  \"email\": \"brayan.gomez@example.com\",\n  \"telefono\": \"+57 311 555 1234\",\n  \"direccion\": \"Calle 45 # 12-34, Bogota\"\n}"
             },
-            {
-              "key": "price",
-              "value": "-15.00"
-            }
-          ]
+            "url": {
+              "raw": "{{base_url}}/api/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios"]
+            },
+            "description": "Registra un nuevo usuario aplicando validaciones de dominio (nombre obligatorio, email único)."
+          },
+          "response": []
         },
-        "description": "Prueba de error de validación cuando el precio es negativo o cero."
-      },
-      "response": []
+        {
+          "name": "1.3 Consultar Usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/usuarios/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios", "1"]
+            },
+            "description": "Retorna el usuario con ID 1 o HTTP 404 si no existe."
+          },
+          "response": []
+        },
+        {
+          "name": "1.4 Actualizar Usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Brayan A. Gomez Actualizado\",\n  \"email\": \"brayan.nuevo@example.com\",\n  \"telefono\": \"+57 300 111 2233\",\n  \"direccion\": \"Carrera 7 # 100-20, Bogota\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/usuarios/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios", "1"]
+            },
+            "description": "Actualiza los datos del usuario especificado."
+          },
+          "response": []
+        },
+        {
+          "name": "1.5 Eliminar Usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/usuarios/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios", "1"]
+            },
+            "description": "Elimina un usuario por su ID."
+          },
+          "response": []
+        },
+        {
+          "name": "1.6 Validación Email Inválido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Usuario Invalido\",\n  \"email\": \"correo_sin_arroba\",\n  \"telefono\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios"]
+            },
+            "description": "Prueba de error de regla de negocio cuando el correo no tiene un formato válido (HTTP 400)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Módulo de Productos",
+      "item": [
+        {
+          "name": "2.1 Listar Productos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/productos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "productos"]
+            },
+            "description": "Retorna todos los productos del catálogo."
+          },
+          "response": []
+        },
+        {
+          "name": "2.2 Crear Producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Teclado Mecanico Inalambrico\",\n  \"descripcion\": \"Switches Brown RGB Bluetooth\",\n  \"precio\": 89.99,\n  \"stock\": 20\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/productos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "productos"]
+            },
+            "description": "Crea un producto nuevo en el catálogo."
+          },
+          "response": []
+        },
+        {
+          "name": "2.3 Consultar Producto por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/productos/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "productos", "1"]
+            },
+            "description": "Consulta un producto por su identificador."
+          },
+          "response": []
+        },
+        {
+          "name": "2.4 Actualizar Producto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Teclado Mecanico Inalambrico Pro\",\n  \"descripcion\": \"Switches Brown RGB Tri-mode\",\n  \"precio\": 99.99,\n  \"stock\": 25\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/productos/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "productos", "1"]
+            },
+            "description": "Actualiza la información y el stock de un producto existente."
+          },
+          "response": []
+        },
+        {
+          "name": "2.5 Validación Producto Precio Negativo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Mouse Defectuoso\",\n  \"precio\": -10.00,\n  \"stock\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/productos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "productos"]
+            },
+            "description": "Verifica que el dominio rechace productos con precio negativo o cero (HTTP 400)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Módulo de Pedidos y Carrito",
+      "item": [
+        {
+          "name": "3.1 Listar Pedidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pedidos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos"]
+            },
+            "description": "Lista todos los pedidos registrados en el sistema."
+          },
+          "response": []
+        },
+        {
+          "name": "3.2 Crear Pedido con Ítems (Carrito)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 1,\n  \"cliente\": \"Brayan Alexis Gomez\",\n  \"items\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 2\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pedidos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos"]
+            },
+            "description": "Crea un nuevo pedido en estado CARRITO calculando subtotales y total automáticamente."
+          },
+          "response": []
+        },
+        {
+          "name": "3.3 Consultar Pedido por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1"]
+            },
+            "description": "Retorna el detalle completo de un pedido incluyendo todos sus ítems."
+          },
+          "response": []
+        },
+        {
+          "name": "3.4 Listar Pedidos por Usuario ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/usuario/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "usuario", "1"]
+            },
+            "description": "Retorna todos los pedidos asociados a un usuario específico."
+          },
+          "response": []
+        },
+        {
+          "name": "3.5 Agregar Ítem al Carrito",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productoId\": 1,\n  \"cantidad\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1/items",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1", "items"]
+            },
+            "description": "Agrega un ítem adicional al pedido y recalcula el monto total."
+          },
+          "response": []
+        },
+        {
+          "name": "3.6 Quitar Ítem del Carrito",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1/items/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1", "items", "1"]
+            },
+            "description": "Elimina un ítem específico del pedido en estado CARRITO y recalcula el total."
+          },
+          "response": []
+        },
+        {
+          "name": "3.7 Confirmar Pedido",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1/confirmar",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1", "confirmar"]
+            },
+            "description": "Confirma el pedido: valida que el carrito no esté vacío, valida y descuenta inventario de los productos y cambia el estado a CONFIRMADO."
+          },
+          "response": []
+        },
+        {
+          "name": "3.8 Eliminar Pedido",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1"]
+            },
+            "description": "Elimina un pedido del sistema."
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
